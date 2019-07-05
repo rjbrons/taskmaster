@@ -8,6 +8,6 @@ public class TaskmasterController {
 
     @GetMapping("/")
     public String goHome(){
-        return "Hello World";
+        return "Task Master App";
     }
 }

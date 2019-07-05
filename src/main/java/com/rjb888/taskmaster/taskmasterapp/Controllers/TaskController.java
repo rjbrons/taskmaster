@@ -3,13 +3,9 @@ package com.rjb888.taskmaster.taskmasterapp.Controllers;
 import com.rjb888.taskmaster.taskmasterapp.Models.Task;
 import com.rjb888.taskmaster.taskmasterapp.Repos.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class TaskController {
@@ -22,15 +18,25 @@ public class TaskController {
     }
 
     @PostMapping("/tasks")
-    public RedirectView newTask(){
-
-        return new RedirectView("/");
+    public void newTask(String title, String description){
+        Task myTask = new Task(title, description);
+        taskRepo.save(myTask);
     }
 
     @PutMapping("/tasks/{id}/state")
-    public RedirectView updateTask(){
-        // if (this.status == "available") ... etc.  update state accordingly
-
-        return new RedirectView("/");
+    public void updateTask(@PathVariable UUID id){
+        Task taskToUpdate = taskRepo.findById(id).get();
+        switch (taskToUpdate.getStatus()){
+            case "Available":
+                taskToUpdate.setStatus("Assigned");
+                break;
+            case "Assigned":
+                taskToUpdate.setStatus("Accepted");
+                break;
+            case "Accepted":
+                taskToUpdate.setStatus("Finished");
+                break;
+        }
+        taskRepo.save(taskToUpdate);
     }
 }
