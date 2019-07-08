@@ -17,11 +17,39 @@ public class TaskController {
         return taskRepo.findAll();
     }
 
-    @PostMapping("/tasks")
-    public void newTask(String title, String description){
-        Task myTask = new Task(title, description);
-        taskRepo.save(myTask);
+//    @PostMapping("/tasks")
+//    public void newTask(String title, String description, String assignee){
+//        if (assignee == null){
+//            Task myTask = new Task(title, description);
+//            taskRepo.save(myTask);
+//        } else {
+//            Task myTask = new Task(title, description, assignee);
+//            taskRepo.save(myTask);
+//        }
+//    }
+
+    @GetMapping("/users/{assignee}/tasks")
+    public Iterable<Task> getTaskByAssignee(@PathVariable String assignee){
+        return taskRepo.findByAssignee(assignee);
     }
+
+    @PostMapping("/tasks")
+    public void newTask(@RequestBody Task task){
+        if (task.getAssignee() == null){
+            task.setStatus("Available");
+            taskRepo.save(task);
+        } else {
+            task.setStatus("Assigned");
+            taskRepo.save(task);
+        }
+    }
+
+
+//    @PostMapping("/tasks")
+//    public void newTask( String title, String description){
+//        Task myTask = new Task(title, description);
+//        taskRepo.save(myTask);
+//    }
 
     @PutMapping("/tasks/{id}/state")
     public void updateTask(@PathVariable UUID id){
@@ -39,4 +67,15 @@ public class TaskController {
         }
         taskRepo.save(taskToUpdate);
     }
+
+    @PutMapping("tasks/{id}/assign/{assignee}")
+    public void updateAssignee(@PathVariable UUID id, @PathVariable String assignee){
+        Task taskToUpdate = taskRepo.findById(id).get();
+        taskToUpdate.setStatus("Assigned");
+        taskToUpdate.setAssignee(assignee);
+        taskRepo.save(taskToUpdate);
+    }
+
+
+
 }

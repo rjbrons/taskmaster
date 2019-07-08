@@ -10,4 +10,5 @@ import java.util.UUID;
 @EnableScan
 public interface TaskRepo extends CrudRepository<Task, String> {
     Optional<Task> findById(UUID id);
+    Iterable<Task> findByAssignee(String assignee);
 }
