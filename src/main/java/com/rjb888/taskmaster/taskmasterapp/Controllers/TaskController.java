@@ -4,17 +4,27 @@ import com.rjb888.taskmaster.taskmasterapp.Models.Task;
 import com.rjb888.taskmaster.taskmasterapp.Repos.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 public class TaskController {
+
+    private S3Client s3Client;
+
     @Autowired
     TaskRepo taskRepo;
 
     @GetMapping("/tasks")
     public Iterable<Task> getTask(){
         return taskRepo.findAll();
+    }
+
+    @GetMapping("/tasks/{id}")
+    public Task getTaskById(@PathVariable UUID id){
+        return taskRepo.findById(id).get();
     }
 
 //    @PostMapping("/tasks")
@@ -44,6 +54,11 @@ public class TaskController {
         }
     }
 
+    @PostMapping("/tasks/{id}/images")
+    public void addTaskImage(@PathVariable UUID id, @RequestPart MultipartFile file){
+        Task taskToUpdate = taskRepo.findById(id).get();
+
+    }
 
 //    @PostMapping("/tasks")
 //    public void newTask( String title, String description){
