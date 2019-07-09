@@ -18,6 +18,7 @@ public class Task {
     String description;
     String status;
     String assignee;
+    String image;
 
     public Task(){};
 
@@ -43,6 +44,15 @@ public class Task {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    @DynamoDBAttribute
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     @DynamoDBAttribute
