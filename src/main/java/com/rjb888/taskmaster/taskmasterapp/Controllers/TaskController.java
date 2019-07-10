@@ -1,6 +1,7 @@
 package com.rjb888.taskmaster.taskmasterapp.Controllers;
 
 import com.rjb888.taskmaster.taskmasterapp.Models.Task;
+import com.rjb888.taskmaster.taskmasterapp.Repos.S3Client;
 import com.rjb888.taskmaster.taskmasterapp.Repos.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,11 @@ import java.util.UUID;
 public class TaskController {
 
     private S3Client s3Client;
+
+    @Autowired
+    TaskController (S3Client s3Client){
+        this.s3Client = s3Client;
+    }
 
     @Autowired
     TaskRepo taskRepo;
@@ -44,7 +50,7 @@ public class TaskController {
     }
 
     @PostMapping("/tasks")
-    public void newTask(@RequestBody Task task){
+    public Task newTask(@RequestBody Task task){
         if (task.getAssignee() == null){
             task.setStatus("Available");
             taskRepo.save(task);
@@ -52,12 +58,15 @@ public class TaskController {
             task.setStatus("Assigned");
             taskRepo.save(task);
         }
+        return task;
     }
 
     @PostMapping("/tasks/{id}/images")
-    public void addTaskImage(@PathVariable UUID id, @RequestPart MultipartFile file){
+    public Task addTaskImage(@PathVariable UUID id, @RequestPart MultipartFile file){
         Task taskToUpdate = taskRepo.findById(id).get();
-
+        taskToUpdate.setImage(this.s3Client.uploadFile(file));
+        taskRepo.save(taskToUpdate);
+        return taskToUpdate;
     }
 
 //    @PostMapping("/tasks")
