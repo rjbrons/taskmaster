@@ -65,6 +65,10 @@ public class TaskController {
     public Task addTaskImage(@PathVariable UUID id, @RequestPart MultipartFile file){
         Task taskToUpdate = taskRepo.findById(id).get();
         taskToUpdate.setImage(this.s3Client.uploadFile(file));
+        String url = taskToUpdate.getImage();
+        String smallImageUrl = url.replaceAll("us-east-2", "us-west-2");
+        smallImageUrl = smallImageUrl.replaceAll("amazonaws.com/", "amazonaws.com/resized-");
+        taskToUpdate.setSmallImage(smallImageUrl);
         taskRepo.save(taskToUpdate);
         return taskToUpdate;
     }
