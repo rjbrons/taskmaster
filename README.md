@@ -24,4 +24,4 @@ This is an app that allows a user to track tasks that need to be done.  A user c
 `http://taskmaster-env.txmi2mw3a9.us-east-2.elasticbeanstalk.com`
 
 ## Images for Lab 39
-![](
+![](./src/main/resources/static/lambda.png)
